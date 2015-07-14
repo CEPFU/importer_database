@@ -27,14 +27,14 @@ public class DataCollectionTool extends AConnectionHandler{
 
 	@Override
 	public void handleReceivedData(byte[] data) {
-		//TODO warum fuktioniert das hier nicht richtig? socket closed
 		try {
 			String jsonString = new String(data, "UTF-8");
 			
 			String statement = ""
 				+ "INSERT INTO weather_data "
 				+ "(data) "
-				+ " ? "
+				+ "VALUES "
+				+ "(?) "
 				+ "; ";
 			
 			PreparedStatement preparedStatement = connection.prepareStatement(statement);
