@@ -1,12 +1,13 @@
 package de.fu_berlin.agdb.importer_database.core;
 
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.SQLException;
+
+import de.fu_berlin.agdb.importer.tools.ConnectionManager;
 
 public final class DatabaseSetupTool {
-	public static void createMetaDataTable(Connection connection) throws SQLException{
+	public static void createMetaDataTable(ConnectionManager connectionManager) throws Exception{
+		Connection connection = connectionManager.requestConnection();
 		String mainTableStatement = "CREATE TABLE public.location_meta_data" + 
 				"( " +
 					"location_id serial NOT NULL, " +
@@ -22,9 +23,11 @@ public final class DatabaseSetupTool {
 		PreparedStatement mainTablePreparedStatemend = connection.prepareStatement(mainTableStatement);
 		mainTablePreparedStatemend.execute();
 		mainTablePreparedStatemend.close();
+		connectionManager.returnConnectionToPool(connection);
 	}
 	
-	public static void createDWDMetaDataTable(Connection connection) throws SQLException{
+	public static void createDWDMetaDataTable(ConnectionManager connectionManager) throws Exception{
+		Connection connection = connectionManager.requestConnection();
 		String dwdTableStatement = "CREATE TABLE public.dwd_meta_data" + 
 				"( " +
 					"location_id bigint NOT NULL, " +
@@ -44,14 +47,18 @@ public final class DatabaseSetupTool {
 		PreparedStatement dwdTablePreparedStatemend = connection.prepareStatement(dwdTableStatement);
 		dwdTablePreparedStatemend.execute();
 		dwdTablePreparedStatemend.close();
+		connectionManager.returnConnectionToPool(connection);
 	}
 	
-	public static void insertDWDMetaInformation(Connection connection) throws SQLException, IOException{
+	public static void insertDWDMetaInformation(ConnectionManager connectionManager) throws Exception{
+		Connection connection = connectionManager.requestConnection();
 		DWDMetaDataFileGatherer dwdMetaDataFileGatherer = new DWDMetaDataFileGatherer();
 		dwdMetaDataFileGatherer.gatherAndInjectMetaData(connection);
+		connectionManager.returnConnectionToPool(connection);
 	}
 	
-	public static void createWeatherDataTable(Connection connection) throws SQLException{
+	public static void createWeatherDataTable(ConnectionManager connectionManager) throws Exception{
+		Connection connection = connectionManager.requestConnection();
 		String weatherDataTableStatement = "CREATE TABLE public.weather_data" + 
 				"( " +
 					"weather_data_id serial NOT NULL, " +
@@ -66,5 +73,6 @@ public final class DatabaseSetupTool {
 		PreparedStatement weatherDataTablePreparedStatemend = connection.prepareStatement(weatherDataTableStatement);
 		weatherDataTablePreparedStatemend.execute();
 		weatherDataTablePreparedStatemend.close();
+		connectionManager.returnConnectionToPool(connection);
 	}
 }
