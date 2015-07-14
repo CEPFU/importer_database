@@ -54,7 +54,7 @@ public final class DatabaseSetupTool {
 	public static void createWeatherDataTable(Connection connection) throws SQLException{
 		String weatherDataTableStatement = "CREATE TABLE public.weather_data" + 
 				"( " +
-					"weather_data_id bigint NOT NULL, " +
+					"weather_data_id serial NOT NULL, " +
 					"data json NOT NULL, " +
 					"CONSTRAINT weather_data_primary_key PRIMARY KEY (weather_data_id) " +
 				") " +
