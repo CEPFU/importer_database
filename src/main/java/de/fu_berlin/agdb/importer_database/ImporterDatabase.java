@@ -35,6 +35,8 @@ public class ImporterDatabase {
     private boolean createTables = false;
 
     /* currently not working */
+    @Option(name = "-insert", usage = "insert metadata")
+    private boolean insertMetadata = false;
     @Option(name = "-D", aliases = {"-collect"}, usage = "collect weather data")
     private boolean collectData = false;
     @Option(name = "-DH", aliases = {"-collect-host"}, usage = "host for data collection")
@@ -76,8 +78,10 @@ public class ImporterDatabase {
                 DatabaseSetupTool.createWeatherDataTable(connectionManager);
             }
 
-            logger.log(Level.INFO, "Inserting DWD Meta Information...");
-            DatabaseSetupTool.insertDWDMetaInformation(connectionManager);
+            if(insertMetadata){
+	            logger.log(Level.INFO, "Inserting DWD Meta Information...");
+	            DatabaseSetupTool.insertDWDMetaInformation(connectionManager);
+            }
 
             if (collectData) {
                 logger.log(Level.INFO, "Collection data...");
