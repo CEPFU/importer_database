@@ -86,6 +86,7 @@ public class DWDMetaDataFileGatherer {
 				+ "    SELECT station_id "
 				+ "    FROM dwd_meta_data "
 				+ "    WHERE station_id = ?) "
+				+ "RETURNING location_id "
 				+ "; ";
 		PreparedStatement locationPreparedStatemend = connection.prepareStatement(locationStatement);
 		locationPreparedStatemend.setDouble(1, longitude);
@@ -94,13 +95,9 @@ public class DWDMetaDataFileGatherer {
 		locationPreparedStatemend.setLong(4, stationId);
 		locationPreparedStatemend.execute();
 		
-		//TODO fix query below always not returning the correct value (is always byte 49)
-		//same happens with RETURNING in above query
-		String locationIdStatement = "SELECT currval('location_meta_data_location_id_seq');";
-		PreparedStatement locationIdPreparedStatement = connection.prepareStatement(locationIdStatement);
-		ResultSet resultSet = locationIdPreparedStatement.executeQuery();
+		ResultSet resultSet = locationPreparedStatemend.getResultSet();
 		resultSet.next();
-		long locationId = resultSet.getLong("currval");
+		long locationId = resultSet.getLong("location_id");
 		resultSet.close();
 		locationPreparedStatemend.close();
 		

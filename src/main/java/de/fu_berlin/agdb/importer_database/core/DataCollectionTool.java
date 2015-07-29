@@ -37,7 +37,7 @@ public class DataCollectionTool extends AConnectionHandler{
 					+ "INSERT INTO weather_data "
 					+ "(data) "
 					+ "VALUES "
-					+ "(?) "
+					+ "(?::json) "
 					+ "; ";
 				
 				PreparedStatement preparedStatement = connection.prepareStatement(statement);
