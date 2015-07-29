@@ -31,8 +31,8 @@ public class ImporterDatabase {
     private String password = "ems";
     @Option(name = "-c", aliases = {"-max-connections"}, usage = "maximum number of connections")
     private int maxConnections = 10;
-    @Option(name = "-drop", usage = "drop existing tables (not in use yet)")
-    private boolean dropTables = true;
+    @Option(name = "-create", usage = "create tables")
+    private boolean createTables = false;
 
     /* currently not working */
     @Option(name = "-D", aliases = {"-collect"}, usage = "collect weather data")
@@ -69,10 +69,12 @@ public class ImporterDatabase {
         ConnectionManager connectionManager = new ConnectionManager(host + ":" + Integer.toString(port), database, user, password, maxConnections);
 
         try {
-            logger.log(Level.INFO, "Creating tables...");
-            DatabaseSetupTool.createMetaDataTable(connectionManager);
-            DatabaseSetupTool.createDWDMetaDataTable(connectionManager);
-            DatabaseSetupTool.createWeatherDataTable(connectionManager);
+            if (createTables) {
+                logger.log(Level.INFO, "Creating tables...");
+                DatabaseSetupTool.createMetaDataTable(connectionManager);
+                DatabaseSetupTool.createDWDMetaDataTable(connectionManager);
+                DatabaseSetupTool.createWeatherDataTable(connectionManager);
+            }
 
             logger.log(Level.INFO, "Inserting DWD Meta Information...");
             DatabaseSetupTool.insertDWDMetaInformation(connectionManager);
