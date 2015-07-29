@@ -40,7 +40,7 @@ public class ImporterDatabase {
     @Option(name = "-D", aliases = {"-collect"}, usage = "collect weather data")
     private boolean collectData = false;
     @Option(name = "-DH", aliases = {"-collect-host"}, usage = "host for data collection")
-    private String collectDataHost = "10.10.10.50";
+    private String collectDataHost = "localhost";
     @Option(name = "-DP", aliases = {"-collect-port"}, usage = "port for data collection")
     private int collectDataPort = 9977;
 
