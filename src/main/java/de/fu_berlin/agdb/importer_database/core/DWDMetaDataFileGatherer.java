@@ -2,10 +2,11 @@ package de.fu_berlin.agdb.importer_database.core;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.SocketException;
 import java.sql.Connection;
@@ -38,9 +39,9 @@ public class DWDMetaDataFileGatherer {
 				
 		if(file.exists()){
 			BufferedReader reader;
-			reader = new BufferedReader(new FileReader(file));
+			reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), "ISO-8859-1"));
 			//ignore first two lines because there is no information
-			String line = reader.readLine(); 
+			String line = new String(reader.readLine()); 
 			line = reader.readLine(); 
 			//ignore first two lines because there is no information
 			
