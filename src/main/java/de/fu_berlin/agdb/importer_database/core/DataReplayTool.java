@@ -9,7 +9,6 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
 import de.fu_berlin.agdb.importer.tools.ConnectionManager;
-import de.fu_berlin.agdb.importer_database.ImporterDatabase;
 import de.fu_berlin.agdb.nio_tools.AConnectionHandler;
 import de.fu_berlin.agdb.nio_tools.NioServer;
 
