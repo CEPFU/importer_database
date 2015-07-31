@@ -2,7 +2,9 @@ package de.fu_berlin.agdb.importer_database;
 
 import de.fu_berlin.agdb.importer.tools.ConnectionManager;
 import de.fu_berlin.agdb.importer_database.core.DataCollectionTool;
+import de.fu_berlin.agdb.importer_database.core.DataReplayTool;
 import de.fu_berlin.agdb.importer_database.core.DatabaseSetupTool;
+
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
 import org.apache.log4j.LogManager;
@@ -31,18 +33,27 @@ public class ImporterDatabase {
     private String password = "ems";
     @Option(name = "-c", aliases = {"-max-connections"}, usage = "maximum number of connections")
     private int maxConnections = 10;
+    
     @Option(name = "-create", usage = "create tables")
     private boolean createTables = false;
-
-    /* currently not working */
+    
     @Option(name = "-insert", usage = "insert metadata")
     private boolean insertMetadata = false;
+    
     @Option(name = "-D", aliases = {"-collect"}, usage = "collect weather data")
     private boolean collectData = false;
     @Option(name = "-DH", aliases = {"-collect-host"}, usage = "host for data collection")
     private String collectDataHost = "localhost";
     @Option(name = "-DP", aliases = {"-collect-port"}, usage = "port for data collection")
     private int collectDataPort = 9977;
+    
+    @Option(name = "-R", aliases = {"-replay"}, usage = "replay events from database")
+    private boolean replayData = true;
+    @Option(name = "-RP", aliases = {"-replay-port"}, usage = "port for replaying the data")
+    private int replayDataPort = 9977;
+    
+    @Option(name = "-RI", aliases = {"-replay-intervall"}, usage = "the intervall used to replay the data")
+    private long replayIntervall = 30000;
 
     public static void main(String[] args) {
         ImporterDatabase importer = new ImporterDatabase();
@@ -86,6 +97,11 @@ public class ImporterDatabase {
             if (collectData) {
                 logger.log(Level.INFO, "Collection data...");
                 new DataCollectionTool(collectDataHost, collectDataPort, connectionManager);
+            }
+            
+            if(replayData){
+            	logger.log(Level.INFO, "Replaying previously collected data");
+            	new DataReplayTool(replayDataPort, connectionManager, replayIntervall);
             }
         } catch (Exception e) {
             logger.error("An error occured:", e);
