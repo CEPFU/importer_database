@@ -1,28 +1,23 @@
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <parent>
+    <groupId>de.fu-berlin.agdb</groupId>
+    <artifactId>crepe-parent</artifactId>
+    <version>0.1.0</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>de.fu-berlin.agdb</groupId>
   <artifactId>importer-database</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>0.1.0</version>
   <packaging>jar</packaging>
 
-  <name>importer-database</name>
-  <url>http://maven.apache.org</url>
+  <name>Database Importer</name>
 
   <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <app.mainClass>de.fu_berlin.agdb.importer_database.ImporterDatabase</app.mainClass>
-    <maven.compile.source>1.8</maven.compile.source>
-    <maven.compile.target>1.8</maven.compile.target>
   </properties>
 
   <dependencies>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.12</version>
-      <scope>test</scope>
-    </dependency>
     <dependency>
       <groupId>commons-net</groupId>
       <artifactId>commons-net</artifactId>
@@ -36,32 +31,23 @@
     <dependency>
       <groupId>org.postgresql</groupId>
       <artifactId>postgresql</artifactId>
-      <version>9.4-1201-jdbc41</version>
+      <version>${postgresql.version}</version>
     </dependency>
 
     <dependency>
       <groupId>de.fu-berlin.agdb</groupId>
       <artifactId>importer</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
+      <version>0.1.0</version>
     </dependency>
     <dependency>
       <groupId>de.fu-berlin.agdb</groupId>
       <artifactId>nio-tools</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
+      <version>0.1.0</version>
     </dependency>
   </dependencies>
 
   <build>
     <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.3</version>
-        <configuration>
-          <source>${maven.compile.source}</source>
-          <target>${maven.compile.target}</target>
-        </configuration>
-      </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
@@ -86,8 +72,8 @@
             <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
               <manifestEntries>
                 <Main-Class>${app.mainClass}</Main-Class>
-                <X-Compile-Source-JDK>${maven.compile.source}</X-Compile-Source-JDK>
-                <X-Compile-Target-JDK>${maven.compile.target}</X-Compile-Target-JDK>
+                <X-Compile-Source-JDK>${java.version}</X-Compile-Source-JDK>
+                <X-Compile-Target-JDK>${java.version}</X-Compile-Target-JDK>
               </manifestEntries>
             </transformer>
           </transformers>
