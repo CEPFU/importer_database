@@ -11,7 +11,6 @@ import de.fu_berlin.agdb.importer_database.core.DataCollectionTool;
 import de.fu_berlin.agdb.importer_database.core.DataReplayTool;
 import de.fu_berlin.agdb.importer_database.core.DatabaseSetupTool;
 
-import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -35,8 +34,6 @@ public class ImporterDatabase {
 	}
 
     public void run() {
-        BasicConfigurator.configure();
-        
         ConnectionManager connectionManager = new ConnectionManager(properties.getProperty("database_host") + ":" + properties.getProperty("database_port"), 
         		properties.getProperty("database"), properties.getProperty("database_user"), 
         		properties.getProperty("database_password"), Integer.valueOf(properties.getProperty("maximum_database_connections")));
