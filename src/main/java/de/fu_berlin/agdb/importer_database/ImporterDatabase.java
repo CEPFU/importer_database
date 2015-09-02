@@ -1,91 +1,66 @@
 package de.fu_berlin.agdb.importer_database;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.Properties;
+
 import de.fu_berlin.agdb.importer.tools.ConnectionManager;
 import de.fu_berlin.agdb.importer_database.core.DataCollectionTool;
+import de.fu_berlin.agdb.importer_database.core.DataReplayTool;
 import de.fu_berlin.agdb.importer_database.core.DatabaseSetupTool;
-import org.apache.log4j.BasicConfigurator;
+
 import org.apache.log4j.Level;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
-import org.kohsuke.args4j.CmdLineException;
-import org.kohsuke.args4j.CmdLineParser;
-import org.kohsuke.args4j.Option;
-import org.kohsuke.args4j.ParserProperties;
 
 public class ImporterDatabase {
 
     private static final Logger logger = LogManager.getLogger(ImporterDatabase.class);
 
-    @Option(name = "-help", aliases = {"--help", "-H"}, usage = "print this help message", help = true)
-    private boolean help = false;
-
-    @Option(name = "-h", aliases = {"-host"}, usage = "the database host")
-    private String host = "localhost";
-    @Option(name = "-p", aliases = {"-port"}, usage = "port for the database")
-    private int port = 5432;
-    @Option(name = "-d", aliases = {"-db"}, usage = "name of the database")
-    private String database = "ems";
-    @Option(name = "-u", aliases = {"-user"}, usage = "username for the database")
-    private String user = "ems";
-    @Option(name = "-x", aliases = {"-pass"}, usage = "password for the database")
-    private String password = "ems";
-    @Option(name = "-c", aliases = {"-max-connections"}, usage = "maximum number of connections")
-    private int maxConnections = 10;
-    @Option(name = "-create", usage = "create tables")
-    private boolean createTables = false;
-
-    /* currently not working */
-    @Option(name = "-insert", usage = "insert metadata")
-    private boolean insertMetadata = false;
-    @Option(name = "-D", aliases = {"-collect"}, usage = "collect weather data")
-    private boolean collectData = false;
-    @Option(name = "-DH", aliases = {"-collect-host"}, usage = "host for data collection")
-    private String collectDataHost = "localhost";
-    @Option(name = "-DP", aliases = {"-collect-port"}, usage = "port for data collection")
-    private int collectDataPort = 9977;
-
-    public static void main(String[] args) {
+    Properties properties;
+    
+    public static void main(String[] args) throws FileNotFoundException, IOException {
         ImporterDatabase importer = new ImporterDatabase();
-
-        // Use `null` as option sorter so the options appear in the specified order
-        CmdLineParser parser = new CmdLineParser(importer, ParserProperties.defaults().withOptionSorter(null));
-
-        try {
-            parser.parseArgument(args);
-        } catch (CmdLineException e) {
-            System.err.println(e.getMessage());
-            parser.printUsage(System.err);
-            return;
-        }
-
-        if (importer.help) {
-            parser.printUsage(System.out);
-            return;
-        }
-
         importer.run();
     }
+    
+    public ImporterDatabase() throws FileNotFoundException, IOException {
+    	properties = new Properties();
+    	FileReader reader = new FileReader(new File("importer-database.properties"));
+		properties.load(reader);
+		reader.close();
+	}
 
     public void run() {
-        BasicConfigurator.configure();
-        ConnectionManager connectionManager = new ConnectionManager(host + ":" + Integer.toString(port), database, user, password, maxConnections);
+        ConnectionManager connectionManager = new ConnectionManager(properties.getProperty("database_host") + ":" + properties.getProperty("database_port"), 
+        		properties.getProperty("database"), properties.getProperty("database_user"), 
+        		properties.getProperty("database_password"), Integer.valueOf(properties.getProperty("maximum_database_connections")));
 
         try {
-            if (createTables) {
+            if (Boolean.valueOf(properties.getProperty("create_database_tables"))) {
                 logger.log(Level.INFO, "Creating tables...");
                 DatabaseSetupTool.createMetaDataTable(connectionManager);
                 DatabaseSetupTool.createDWDMetaDataTable(connectionManager);
                 DatabaseSetupTool.createWeatherDataTable(connectionManager);
             }
 
-            if(insertMetadata){
+            if(Boolean.valueOf(properties.getProperty("insert_dwd_metadata"))){
 	            logger.log(Level.INFO, "Inserting DWD Meta Information...");
 	            DatabaseSetupTool.insertDWDMetaInformation(connectionManager);
             }
 
-            if (collectData) {
+            if (Boolean.valueOf(properties.getProperty("collect_data"))) {
                 logger.log(Level.INFO, "Collection data...");
-                new DataCollectionTool(collectDataHost, collectDataPort, connectionManager);
+                new DataCollectionTool(properties.getProperty("collect_data_host"), 
+                		Integer.valueOf(properties.getProperty("collect_data_port")), connectionManager);
+            }
+            
+            if(Boolean.valueOf(properties.getProperty("replay_data"))){
+            	logger.log(Level.INFO, "Replaying previously collected data");
+            	new DataReplayTool(Integer.valueOf(properties.getProperty("replay_data_port")), 
+            			connectionManager, Long.valueOf(properties.getProperty("replay_intervall")));
             }
         } catch (Exception e) {
             logger.error("An error occured:", e);
