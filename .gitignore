@@ -4,6 +4,7 @@
 
 # Maven directories
 /target/
+/dependency-reduced-pom.xml
 
 # Eclipse
 .settings/
