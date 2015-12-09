@@ -11,6 +11,7 @@ import de.fu_berlin.agdb.importer_database.core.DataCollectionTool;
 import de.fu_berlin.agdb.importer_database.core.DataReplayTool;
 import de.fu_berlin.agdb.importer_database.core.DatabaseSetupTool;
 
+import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -22,7 +23,9 @@ public class ImporterDatabase {
     Properties properties;
     
     public static void main(String[] args) throws FileNotFoundException, IOException {
-        ImporterDatabase importer = new ImporterDatabase();
+    	BasicConfigurator.configure();
+    	
+    	ImporterDatabase importer = new ImporterDatabase();
         importer.run();
     }
     
